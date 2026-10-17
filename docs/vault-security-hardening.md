@@ -1,6 +1,6 @@
 # Vault security hardening
 
-The subsequent [Kotlin OTP parser pilot](kotlin-otp-parser-pilot.md) owns URI validation through the existing Java Entry adapter, with explicit success/failure results and additional encoding checks; the rest of these lifecycle changes remain Java.
+The [Kotlin OTP parser](kotlin-otp-parser-pilot.md) introduced URI validation with explicit success/failure results and encoding checks. The app main sources have since been migrated to Kotlin; this document describes behavior, not source-language boundaries.
 
 This documents the current implementation and its compatibility changes, **not a completed security audit or a claim that Android tests have passed**. Minimum Android remains API 28, target API 35; both existing flavors remain supported by the build configuration.
 

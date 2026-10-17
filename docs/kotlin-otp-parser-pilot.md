@@ -2,7 +2,7 @@
 
 ## Scope and status
 
-The pilot consists of `OtpUriParser.kt` and `OtpParseResult.kt`, their host tests, and a Java/Android interoperability test. It replaces only the URI parsing inside `Entry(String)`. In this initial pilot, UI classes, JSON/backup formats, OTP calculation, JCA crypto, vault/session storage and WorkManager remained Java. The subsequent [vault/session/task contract migration](kotlin-vault-session-task-contracts.md) adds typed Kotlin contracts without moving their Android/storage adapters. No Compose, coroutine, serialization, JNI or native-runtime migration is included.
+The pilot consists of `OtpUriParser.kt` and `OtpParseResult.kt`, their host tests, and a Java/Android interoperability test. It replaces only the URI parsing inside `Entry(String)`. At the time of the pilot, UI classes, JSON/backup formats, OTP calculation, JCA crypto, vault/session storage and WorkManager remained Java. Subsequent conversion work moved the app main sources to Kotlin; see the conversion record for current scope. The subsequent [vault/session/task contract migration](kotlin-vault-session-task-contracts.md) adds typed Kotlin contracts without moving their Android/storage adapters. No Compose, coroutine, serialization, JNI or native-runtime migration is included.
 
 **Implementation is present; compilation/runtime acceptance is still pending.** The sandbox has no complete JDK/Android SDK/Gradle dependency resolution. Java/Kotlin syntax parsing and Python policy tests are not substitutes for Kotlin compilation, JVM JUnit or Android tests. Do not ship this pilot until the existing both-flavor CI and API 28/36 instrumentation gates pass.
 
