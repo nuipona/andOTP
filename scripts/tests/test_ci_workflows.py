@@ -1,6 +1,7 @@
 """Guard the automated gates and manual review workflow the repository documents."""
 from pathlib import Path
 import subprocess
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -64,6 +65,24 @@ class ContinuousIntegrationWorkflowTest(unittest.TestCase):
                 )
                 self.assertEqual(2, result.returncode, result.stdout + result.stderr)
                 self.assertIn("usage:", result.stderr)
+
+    def test_emulator_script_surfaces_gradle_failure_details(self):
+        script = ROOT / "scripts/ci_emulator_tests.sh"
+        with tempfile.TemporaryDirectory() as directory:
+            gradle = Path(directory) / "gradlew"
+            gradle.write_text("#!/bin/sh\necho 'fake Gradle failure sentinel' >&2\nexit 23\n")
+            gradle.chmod(0o755)
+            result = subprocess.run(
+                ["bash", str(script), "Fdroid"],
+                cwd=directory,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            output = result.stdout + result.stderr
+            self.assertEqual(23, result.returncode, output)
+            self.assertIn("fake Gradle failure sentinel", output)
+            self.assertIn("::error title=Connected Gradle test failure::", output)
 
 
 if __name__ == "__main__":
