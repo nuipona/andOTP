@@ -51,7 +51,7 @@ popup.getMenu().findItem(R.id.menu_popup_establishPin)?.setVisible(true)
 
 > Provenance note: the identical constant (`= 4`) and the identical `menu_popup.xml` exist in
 > upstream andOTP master, so this is an **inherited** bug rather than one introduced by this fork's
-> Kotlin conversion. It is still a real defect in the current source and is fixed here.
+> Historical audit note: this defect was fixed in the audited tree. Re-check the current source before treating this finding as open.
 
 **Regression guard added:** `scripts/tests/test_popup_menu_item_lookup.py` (3 tests). It fails if a
 positional `getMenu().getItem(...)` lookup or a `*_MENU_INDEX` constant reappears, if any

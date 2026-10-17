@@ -924,7 +924,7 @@ and refusal exactly where the Java had it.
 ### Password/tag dialogs and encrypted password preference
 
 These three are small Android-facing leaves, not orchestration owners. Their Activity/manual-dialog
-callers, the backup policy and the settings screen remain Java.
+callers, the backup policy and the settings screen were Java at that conversion stage; subsequent batches converted all main app sources to Kotlin.
 
 - **Password entry**: `PasswordEntryDialog` stays open with the same five-argument Java constructor,
   nested `Mode` enum and SAM `PasswordEnteredCallback`. ENTER still hides confirmation, listens on

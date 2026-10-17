@@ -41,8 +41,8 @@ class BrandingPolicyTest(unittest.TestCase):
 
         main_bg = (ROOT / "app/src/main/res/values/ic_launcher_background.xml").read_text()
         debug_bg = (ROOT / "app/src/debug/res/values/ic_launcher_background.xml").read_text()
-        self.assertIn('<color name="ic_launcher_background">#6ABF69</color>', main_bg)
-        self.assertIn('<color name="ic_launcher_background">#FF6659</color>', debug_bg)
+        self.assertIn('<color name="ic_launcher_background">#101A14</color>', main_bg)
+        self.assertIn('<color name="ic_launcher_background">#101A14</color>', debug_bg)
 
     def test_unified_dark_forest_theme_styles_and_aboutlibraries_compatibility(self):
         styles_path = ROOT / "app/src/main/res/values/styles.xml"
@@ -148,14 +148,18 @@ class BrandingPolicyTest(unittest.TestCase):
         self.assertIn('waitUntil("render a library card")', test)
         self.assertIn("list.getChildAt(it) is MaterialCardView", test)
 
-    def test_adaptive_icon_foreground_depicts_black_lock_and_forest(self):
+    def test_adaptive_icons_use_approved_raster_artwork(self):
         for variant in ("main", "debug"):
-            path = ROOT / f"app/src/{variant}/res/drawable/ic_launcher_foreground.xml"
-            ET.parse(path)
-            content = path.read_text()
-            self.assertIn('#000000', content, f"{variant} foreground is missing the black lock")
-            self.assertIn('#1B5E20', content, f"{variant} foreground is missing the forest")
-            self.assertIn('#388E3C', content, f"{variant} foreground is missing the forest")
+            res = ROOT / f"app/src/{variant}/res"
+            self.assertFalse((res / "drawable/ic_launcher_foreground.xml").exists())
+            image = (res / "drawable-nodpi/ic_launcher_foreground.png").read_bytes()
+            self.assertEqual(b"\x89PNG\r\n\x1a\n", image[:8])
+            self.assertEqual((432, 432), struct.unpack(">II", image[16:24]))
+            for name in ("ic_launcher", "ic_launcher_round"):
+                root = ET.parse(res / f"mipmap-anydpi-v26/{name}.xml").getroot()
+                self.assertEqual("adaptive-icon", root.tag)
+                attr = "{http://schemas.android.com/apk/res/android}drawable"
+                self.assertEqual("@drawable/ic_launcher_foreground", root.find("foreground").get(attr))
 
     def test_png_launcher_and_logo_icons_have_expected_dimensions(self):
         expected = {
@@ -163,7 +167,7 @@ class BrandingPolicyTest(unittest.TestCase):
             "assets/logo_legacy.png": (96, 96),
             "assets/feature_graphic.png": (1024, 500),
             "assets/feature_graphic_small.png": (512, 250),
-            "fastlane/metadata/android/en-US/images/icon.png": (96, 96),
+            "fastlane/metadata/android/en-US/images/icon.png": (512, 512),
             "fastlane/metadata/android/en-US/images/featureGraphic.png": (1024, 500),
             "app/src/main/ic_launcher-web.png": (512, 512),
             "app/src/debug/ic_launcher-web.png": (512, 512),

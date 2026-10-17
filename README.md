@@ -1,145 +1,58 @@
-# OfflineOTP - Android OTP Authenticator
-
 ![OfflineOTP](./assets/logo.png)
 
-## Intro
+# OfflineOTP
 
-OfflineOTP is a two-factor authentication app for Android 9.0+.
+OfflineOTP is an open-source Android authenticator that generates time-based (TOTP), counter-based (HOTP), and mOTP one-time passwords. It supports Android 9 (API 28) and later. The current app version is **0.9.0.1**; the Android application ID remains `org.shadowice.flocke.andotp`.
 
-It implements Time-based One-time Passwords (TOTP) and HMAC-Based One-Time Passwords (HOTP).
-Simply scan the QR code and log in with the generated 6-digit code.
+## Features
 
-This project started out as a fork of the great [OTP Authenticator](https://github.com/0xbb/otp-authenticator) app written by [Bruno Bierbaumer](https://github.com/0xbb),
-which has sadly been inactive since 2015. By now almost every aspect of the app has been changed/re-written so the fork status of the Github repository got
-detached upon [user request](https://github.com/andOTP/andOTP/issues/145). But all credit for the original version and for starting this project still goes to Bruno!
+- Add accounts by scanning an authenticator QR code or entering details manually.
+- Store the vault encrypted using Android KeyStore-backed or password/PIN-based protection.
+- Create portable password-encrypted or OpenPGP-encrypted backups.
+- Use light, dark, or black themes; organize entries with tags.
+- Generate TOTP (RFC 6238), HOTP (RFC 4226), and mOTP codes.
 
-## Features:
+## Protecting and restoring your vault
 
- * Free and Open-Source
- * Requires minimal permissions
-   - Camera access for QR code scanning
-   - Storage access for import and export of the database
- * Encrypted storage with two backends:
-   - Android KeyStore
-   - Password / PIN
- * Multiple backup options:
-   - Password-protected
-   - OpenPGP-encrypted
- * Sleek minimalistic Material Design with three different themes:
-   - Light
-   - Dark
-   - Black (for OLED screens)
- * Great Usability
- * Compatible with Google Authenticator
- * Supported algorithms:
-   - TOTP (Time-based One-time Passwords) as specified in [RFC 6238](https://tools.ietf.org/html/rfc6238)
-   - HOTP (HMAC-based One-time Passwords) as specified in [RFC 4226](https://tools.ietf.org/html/rfc4226)
+Use OfflineOTP's in-app backup and restore functions. Android cloud backup and device transfer are disabled, and copying app data with third-party backup tools does not preserve the separate KeyStore key. Export a portable backup and verify that it can be restored before changing devices, reinstalling, clearing app data, or switching to a build signed with a different key. A signing-key change requires uninstalling the old build and can erase its data.
 
-## Backups:
+Automatic backup broadcasts are restricted to explicitly authorized companion apps signed with the same identity; ordinary shell commands and independently signed automation apps are not authorized. See [Vault security hardening](docs/vault-security-hardening.md) for the current behavior and compatibility details.
 
-To keep your account information as secure as possible OfflineOTP only stores it in
-encrypted data files. A part of the encryption key used for that is stored in the
-Android KeyStore system. The advantage of this approach is that the key is kept
-separate from the apps data and, as a bonus, can be backed by hardware cryptography
-(if your device supports this).
+## Build and test
 
-However, due to that separation, backups with 3rd-party apps like Titanium Backup can not
-be used with OfflineOTP. Such apps only backup the encrypted data files and not the encryption
-key, which renders them useless.
+The project uses Gradle, Android Gradle Plugin, Kotlin and Android SDK; current pinned toolchain details, local commands, CI gates, and limitations are documented in [Build and security tests](docs/build-and-security-tests.md). Main app sources and test suites have been migrated to Kotlin. Some checked-in sandbox/source checks are intentionally non-authoritative; successful Gradle builds and Android instrumentation are required for release confidence.
 
-**Please only use the internal backup functions provided by OfflineOTP to backup your accounts!**
-**Everything else WILL result in data loss.**
+## Documentation
 
-### Opening the backups on your PC:
+- [Changelog](CHANGELOG.md) — published release history.
+- [Build and security tests](docs/build-and-security-tests.md) — toolchain, CI, verification steps and caveats.
+- [Vault security hardening](docs/vault-security-hardening.md) — storage, session, backup and IPC security behavior.
+- [Kotlin conversion record](docs/kotlin-extracted-helpers.md) — conversion scope and verification limits.
+- [OTP URI parser](docs/kotlin-otp-parser-pilot.md) and [vault/session/task contracts](docs/kotlin-vault-session-task-contracts.md) — implementation details and contract boundaries.
+- [UI decomposition plan](docs/ui-decomposition-plan.md) — remaining architectural extraction work.
 
- * [OpenPGP](https://openpgp.org/): OpenPGP can be used to easily decrypt the **OpenPGP-encrypted backups** on your PC.
- * [WebDecrypt](https://flocke.shadowice.org/andOTP/decrypt/): JavaScript-based decryption of the **new password-protected backup format** in the browser ([source code](https://github.com/andOTP/WebDecrypt)).
- * [andOTP-decrypt](https://github.com/asmw/andOTP-decrypt): Python script written by @asmw to decrypt the **old and new password-protected backup format** on your PC.
- * [mac2fa](https://github.com/lorenzo2897/mac2fa): Electron app for macOS that lives in your system tray and generates OTPs from an encrypted backup file.
- * [go-andotp](https://github.com/grijul/go-andotp): CLI Program written in go to encrypt/decrypt andOTP files on your PC. Decrypted files can be encrypted and imported back to andOTP.
+## Contributing
 
-### Automatic backups:
+Report bugs and request features through the [GitHub issue tracker](https://github.com/unsubstantiation/OfflineOTP/issues). For bug reports, include the app version, Android version, reproduction steps, and relevant logs; remove secrets and account data before sharing logs.
 
- * **Signature-authorized automation only:** `org.shadowice.flocke.andotp.broadcast.ENCRYPTED_BACKUP` requires `${applicationId}.permission.CONTROL_VAULT`, requested by a companion app signed with the **same signing identity** as OfflineOTP. An explicit package/component is also required on modern Android, but is not authorization. Independently signed Tasker/PanicKit apps and ordinary `adb shell` commands no longer have access. This compatibility break also applies to panic IPC.
- * Broadcast backups require opt-in, KeyStore database encryption, a configured backup directory and a nonempty encrypted backup password. Duplicate requests are coalesced and rate-limited. Automatic exports use new UUID-named documents to avoid overwriting the last recoverable backup.
- * **Android cloud backup/device transfer are disabled.** Use portable password-encrypted or OpenPGP backups and verify that you can restore them before changing devices, clearing keys or switching signing identities.
+## Credits and license
+# LICENSE
 
-See [Vault security hardening](docs/vault-security-hardening.md) for input limits,
-fail-closed behavior, process-only sessions, credential transactions, backup lifecycle
-and remaining verification requirements.
+Copyright (c) 2026 unsubstantiation (fairuniversal.com)
 
-## Migration:
+This software is licensed under the PolyForm Noncommercial License 1.0.0. 
+You may use, copy, modify, and distribute this software for noncommercial purposes only.
 
-Check out [this](https://github.com/andOTP/andOTP/wiki/Migration) wiki page to learn about the different ways to migrate to OfflineOTP from other 2FA apps.
+### Attribution Requirement
+Any copying, distribution, or modification of this code or its contents strictly requires 
+prominent attribution to the original author (unsubstantiation) by retaining the above 
+copyright notice in all copies or substantial portions of the software.
 
-**Warning**: Builds signed with different keys are not compatible!
-You will have to uninstall one to install the other, which will delete all your data.
-So make sure you have a **current backup** before switching!
+To view the full terms, visit: https://polyformproject.org
 
-## Building and testing:
+--------------------------------------------------------------------------------
 
-See [Reproducible builds and security regression tests](docs/build-and-security-tests.md)
-for the pinned toolchain, local commands, CI checks, dependency-baseline review,
-and test coverage/limitations. The [Kotlin OTP parser pilot](docs/kotlin-otp-parser-pilot.md)
-adds a small validated URI boundary with explicit results while retaining Java callers.
-Instrumentation tests must only run on disposable
-emulators or installations without real accounts.
+# ATTRIBUTION
 
-## Contribute:
-
- * **Bug reports and feature requests**: You can report bugs and request features in the [Issue tracker](https://github.com/andOTP/andOTP/issues) on GitHub.
- * **Requesting thumbnails**: If you are missing a thumbnail you can request it by [opening a thumbnail request](https://github.com/andOTP/andOTP/issues/new/choose).
-
-#### Donations:
-
-If you want to show your appreciation for our work with a small donation you can do so using the following links:
-
- * [Donate to Jakob Nixdorf](https://flocke.shadowice.org/donate.html) (Main developer, maintainer)
- * [Donate to Richy HBM](https://richyhbm.co.uk/donate) (Developer)
-
-## Acknowledgments:
-#### Open-source components used:
-
- * [AboutLibraries](https://github.com/mikepenz/AboutLibraries)
- * [Apache Commons Codec](https://commons.apache.org/proper/commons-codec/)
- * [Expandable Layout](https://github.com/AAkira/ExpandableLayout)
- * [Floating Action Button Speed Dial](https://github.com/leinardi/FloatingActionButtonSpeedDial)
- * [material-intro](https://github.com/heinrichreimer/material-intro)
- * [MaterialProgressBar](https://github.com/DreaminginCodeZH/MaterialProgressBar)
- * [OpenPGP API library](https://github.com/open-keychain/openpgp-api)
- * [ZXing Android Embedded](https://github.com/journeyapps/zxing-android-embedded)
- * [Droid Sans Mono Zeromod](https://github.com/AlbertoDorado/droid-sans-mono-zeromod)
-
-#### Code examples used:
-
- * [Android-ItemTouchHelper-Demo](https://github.com/iPaulPro/Android-ItemTouchHelper-Demo/tree/master/app/src/main/java/co/paulburke/android/itemtouchhelperdemo/helper)
- * [Code Parts from Google's Android Samples](https://android.googlesource.com/platform/development/+/master/samples/Vault/src/com/example/android/vault)
- * [LetterBitmap](https://stackoverflow.com/questions/23122088/colored-boxed-with-letters-a-la-gmail)
- * [DimensionConverter](https://stackoverflow.com/questions/8343971/how-to-parse-a-dimension-string-and-convert-it-to-a-dimension-value)
- * [NumberPickerPreference](https://github.com/Alobar/AndroidPreferenceTest/tree/master/alobar-preference)
-
-
-## License:
-```
-Copyright (C) 2017-2020 Jakob Nixdorf <andotp@shadowice.org>
-Copyright (C) 2015 Bruno Bierbaumer
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in the
-Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
-OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
-The [vault/session/task contract migration](docs/kotlin-vault-session-task-contracts.md) extends the Kotlin OTP pilot with typed outcomes and controllers; compilation and device acceptance remain pending.
+This project is a complete update from android 5.1+ to android 9+ rewrite in Kotlin of andOTP, originally copyright 
+(C) 2017-2020 Jakob Nixdorf and (C) 2015 Bruno Bierbaumer.
