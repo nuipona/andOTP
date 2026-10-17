@@ -35,4 +35,4 @@ Report bugs and request features through the [GitHub issue tracker](https://gith
 
 ## Credits and license
 
-OfflineOTP began as a fork of [OTP Authenticator](https://github.com/0xbb/otp-authenticator) by Bruno Bierbaumer. See the [changelog](CHANGELOG.md) for project history and [LICENSE.txt](LICENSE.txt) for the license. Open-source component acknowledgments are maintained in the app's About/Libraries screen.
+OfflineOTP is a Kotlin rewrite of andOTP, originally created by Jakob Nixdorf and Bruno Bierbaumer. See [LICENSE.txt](LICENSE.txt) for the current PolyForm Noncommercial License 1.0.0 and attribution terms. Open-source component acknowledgments are maintained in the app's About/Libraries screen.
