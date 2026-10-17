@@ -121,25 +121,25 @@ If you want to show your appreciation for our work with a small donation you can
 
 ## License:
 ```
-Copyright (C) 2017-2020 Jakob Nixdorf <andotp@shadowice.org>
-Copyright (C) 2015 Bruno Bierbaumer
+# LICENSE
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in the
-Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
+Copyright (c) 2026 unsubstantiation (fairuniversal.com)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This software is licensed under the PolyForm Noncommercial License 1.0.0. 
+You may use, copy, modify, and distribute this software for noncommercial purposes only.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
-OR OTHER DEALINGS IN THE SOFTWARE.
-```
+### Attribution Requirement
+Any copying, distribution, or modification of this code or its contents strictly requires 
+prominent attribution to the original author (unsubstantiation) by retaining the above 
+copyright notice in all copies or substantial portions of the software.
+
+To view the full terms, visit: https://polyformproject.org
+
+--------------------------------------------------------------------------------
+
+# ATTRIBUTION
+
+This project is a complete update from android 5.1+ to android 9+ rewrite in Kotlin of andOTP, originally copyright 
+(C) 2017-2020 Jakob Nixdorf and (C) 2015 Bruno Bierbaumer.
 
 The [vault/session/task contract migration](docs/kotlin-vault-session-task-contracts.md) extends the Kotlin OTP pilot with typed outcomes and controllers; compilation and device acceptance remain pending.
