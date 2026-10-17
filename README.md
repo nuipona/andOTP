@@ -141,5 +141,3 @@ To view the full terms, visit: https://polyformproject.org
 
 This project is a complete update from android 5.1+ to android 9+ rewrite in Kotlin of andOTP, originally copyright 
 (C) 2017-2020 Jakob Nixdorf and (C) 2015 Bruno Bierbaumer.
-
-The [vault/session/task contract migration](docs/kotlin-vault-session-task-contracts.md) extends the Kotlin OTP pilot with typed outcomes and controllers; compilation and device acceptance remain pending.
