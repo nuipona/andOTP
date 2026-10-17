@@ -42,13 +42,21 @@ The manifest no longer suppresses orientation/screen/keyboard configuration recr
 
 The no-offset `TokenCalculator.TOTP_RFC6238` overload is retained as a documented Java-compatible entry point; existing production/tests call that overload, and the compiled-surface check pins it. The stale TODO suggesting removal was misleading because removal would break that surface. The explicit-time call path is now used by `Entry` so the clock sample is consistent.
 
+### CI/build-input gate and an incomplete test harness were repaired
+
+The repository-wide build-input audit found that all four APK workflows used mutable action tags even though the build policy required immutable commit pins. The checker failed locally for those tags, while five Python tests errored because their fixture assumed a missing `android-ci.yml`. There was no workflow running the documented host, lint, packaged-manifest, emulator, or independent reproducibility gates. The workflows now use verified full action SHAs and the pinned Ubuntu/JDK inputs; the checker scans every `.yml`/`.yaml` workflow, handles missing files cleanly, and tests mutations across the actual workflow set.
+
+Added `android-ci.yml` to run the Python/Gradle source checks, both-flavor host tests and focused lint, debug/release/test-APK builds, packaged-manifest inspection, the API 28/36 instrumentation matrix for both flavors, and the independent APK/dependency comparison. Added a read-only, manual `dependency-baseline.yml` that uploads checksum metadata and the dependency inventory for human provenance review rather than committing generated trust data. The build documentation now accurately says dependency locking is not enabled with the existing strict resolution guards; the workflow generates verification metadata only. The emulator helper now rejects missing, extra, or unsupported flavor arguments before starting.
+
+The first sandbox rerun exposed a stand-in mismatch: the app correctly calls Android's Java `LocaleList.size()` method, but the fake API surface declared a Kotlin `size` property. The stand-in and a source guard now match the platform call shape, so the previously documented sandbox compile can actually reach the activity and locale checks.
+
 ## Verification
 
-- `python3 -m unittest discover -s scripts/tests -v` — **174 passed, 2 skipped**. The skipped tests require `GRADLE_EXECUTABLE`, which is not configured.
-- `scripts/kotlin-sandbox/run.sh` using the hash-verified toolchain from `scripts/kotlin-sandbox/bootstrap-toolchain.sh` — **all sandbox checks passed**, including deterministic backward-clock and secret/PIN invalidation checks. This compiles a reviewed source subset against stand-ins; it is not an Android build. The About-page fixture prints a known `PackageManager.NameNotFoundException` to stderr while its sandbox check still passes.
-- `python3 scripts/check_build_inputs.py` — **passed**.
-- `git diff --check` — **passed**.
-- Android Gradle build, JVM Gradle tests, lint, both flavors, packaged-manifest inspection and instrumentation/device acceptance were not run because no Android SDK is configured. Added instrumentation tests are coverage, not evidence that those tests passed.
+- `python3 -m unittest discover -s scripts/tests -v` — **180 passed, 2 skipped**. The two Gradle-fixture cases require `GRADLE_EXECUTABLE`; this environment has no Gradle distribution.
+- `python3 scripts/check_build_inputs.py` — **passed** across every checked-in workflow; mutable action tags are rejected.
+- `scripts/kotlin-sandbox/run.sh` using the hash-verified toolchain from `scripts/kotlin-sandbox/bootstrap-toolchain.sh` — **all sandbox checks passed**, including backward-clock, secret/PIN invalidation, activity compilation and locale checks. This compiles a reviewed source subset against stand-ins; it is not an Android build. The About-page fixture prints a known `PackageManager.NameNotFoundException` to stderr while its sandbox check still passes.
+- All six workflow files parsed as YAML; `bash -n` for both CI helper scripts and `git diff --check` passed.
+- Android Gradle build, JVM Gradle tests, lint, packaged-manifest inspection, APK reproducibility and instrumentation/device acceptance were not run because no Android SDK or Gradle distribution is available here. The new workflows define those gates; their presence is not evidence that they have passed.
 
 ## Remaining acceptance boundary
 

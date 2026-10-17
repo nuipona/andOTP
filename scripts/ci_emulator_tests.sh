@@ -6,7 +6,19 @@
 # makes the exit codes and the memory sampler reliable.
 set -euo pipefail
 
-flavor="${1:?usage: ci_emulator_tests.sh <Fdroid|Play>}"
+if [[ $# -ne 1 ]]; then
+    echo "usage: ci_emulator_tests.sh <Fdroid|Play>" >&2
+    exit 2
+fi
+flavor="$1"
+case "$flavor" in
+    Fdroid|Play) ;;
+    *)
+        echo "unsupported flavor '$flavor' (expected Fdroid or Play)" >&2
+        echo "usage: ci_emulator_tests.sh <Fdroid|Play>" >&2
+        exit 2
+        ;;
+esac
 
 (while true; do echo "$(date +%T) $(free -m | awk '/Mem:/{print "used=" $3 "MB"}')"; sleep 5; done) > mem-emulator.log 2>&1 &
 sampler=$!

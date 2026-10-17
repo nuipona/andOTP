@@ -48,6 +48,10 @@ class KotlinActivityBasesConversionTest(unittest.TestCase):
         self.assertNotIn("updateConfiguration", source)
 
         helper = (KOTLIN / "Utilities/LocaleContextHelper.kt").read_text()
+        locale_stub = (SANDBOX / "stubs/android/android_os.kt").read_text()
+        self.assertIn("locales.size()", helper)
+        self.assertIn("fun size(): Int = 1", locale_stub)
+        self.assertNotIn("val size: Int", locale_stub)
         self.assertIn("Configuration(context.resources.configuration)", helper)
         self.assertIn("configuration.setLocale(locale)", helper)
         self.assertIn("context.createConfigurationContext(configuration)", helper)

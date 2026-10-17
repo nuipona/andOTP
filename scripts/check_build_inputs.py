@@ -17,9 +17,44 @@ HASHES = {
     "gradlew.bat": "0f3ed8f03b50934cb8c48b15a470d5c20a30a5385825e48b55bcc8ea3d8f8e18",
 }
 DISTRIBUTION_HASH = "fba8464465835e74f7270bbf43d6d8a8d7709ab0a43ce1aa3323f73e9aa0c612"
+ACTION_REFERENCE = re.compile(r"[\w.-]+/[\w./-]+@[0-9a-f]{40}")
+ACTION_USE = re.compile(r"(?m)^\s*(?:-\s*)?uses:\s*([^\s#]+)")
+
+
+def _read_wrapper_properties(root: Path, errors: list[str]) -> dict[str, str]:
+    path = root / "gradle/wrapper/gradle-wrapper.properties"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as error:
+        errors.append(f"Cannot inspect gradle/wrapper/gradle-wrapper.properties: {error}")
+        return {}
+
+    properties: dict[str, str] = {}
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key, value = key.strip(), value.strip()
+        if key in properties:
+            errors.append(f"Duplicate wrapper property: {key}")
+        properties[key] = value
+    return properties
+
+
+def _workflow_files(root: Path, errors: list[str]) -> list[Path]:
+    directory = root / ".github/workflows"
+    if not directory.is_dir():
+        errors.append("GitHub Actions workflow directory is missing")
+        return []
+    workflows = sorted((*directory.glob("*.yml"), *directory.glob("*.yaml")))
+    if not workflows:
+        errors.append("No GitHub Actions workflows found")
+    return workflows
 
 
 def check(root=ROOT):
+    root = Path(root)
     errors = []
     for name, expected in HASHES.items():
         try:
@@ -29,22 +64,24 @@ def check(root=ROOT):
             continue
         if actual != expected:
             errors.append(f"Wrapper provenance mismatch: {name}")
-    properties = {}
-    for line in (root / "gradle/wrapper/gradle-wrapper.properties").read_text().splitlines():
-        if "=" in line and not line.startswith("#"):
-            key, value = line.split("=", 1)
-            if key in properties:
-                errors.append(f"Duplicate wrapper property: {key}")
-            properties[key] = value
+
+    properties = _read_wrapper_properties(root, errors)
     if properties.get("distributionUrl") != r"https\://services.gradle.org/distributions/gradle-8.13-all.zip":
         errors.append("Unexpected Gradle distribution URL")
     if properties.get("distributionSha256Sum") != DISTRIBUTION_HASH:
         errors.append("Gradle distribution checksum is missing or changed")
     if properties.get("validateDistributionUrl") != "true":
         errors.append("Gradle distribution URL validation disabled")
-    for workflow in (root / ".github/workflows").glob("*.y*ml"):
-        for reference in re.findall(r"(?m)^\s*(?:-\s*)?uses:\s*([^\s#]+)", workflow.read_text()):
-            if not re.fullmatch(r"[\w.-]+/[\w./-]+@[0-9a-f]{40}", reference):
+
+    for workflow in _workflow_files(root, errors):
+        try:
+            text = workflow.read_text(encoding="utf-8")
+        except OSError as error:
+            errors.append(f"Cannot inspect workflow {workflow.name}: {error}")
+            continue
+        references = ACTION_USE.findall(text)
+        for reference in references:
+            if not ACTION_REFERENCE.fullmatch(reference):
                 errors.append(f"Unpinned workflow action in {workflow.name}: {reference}")
     return errors
 

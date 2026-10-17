@@ -94,24 +94,11 @@ is still checked by both independent release builds.
 
 ## Establish the reviewed dependency baseline
 
-**Not yet generated in this sandbox:** lockfiles and full dependency verification metadata require successful resolution from Google Maven/Maven Central/JitPack. Do not fabricate checksums or accept generated trust metadata automatically.
+**Not yet established:** there is no committed `gradle/verification-metadata.xml` or Gradle lockfile. The build explicitly rejects dynamic/changing versions and does not activate dependency locking; enabling locking is not compatible with the current resolution guards. All declared versions are pinned, but that alone does not freeze every transitive version between runs. The inventory/reproducibility checks compare the graph and bytes within one run; they are not a reviewed baseline.
 
-Dependency locking is enabled in Gradle's default mode so the first resolution can bootstrap. When reviewed lockfiles are committed, normal builds use them; normal CI does **not** pass `--write-locks` or regenerate verification metadata. This initial state is not a completely frozen transitive dependency graph.
+The manual **Generate dependency verification baseline for review** workflow runs all release, unit-test, Android-test, lint, security-client and inventory configurations with `--write-verification-metadata sha256`. It uploads `gradle/verification-metadata.xml` and the dependency inventory as an artifact; it does not commit or push them. Normal CI never regenerates verification metadata. Retrieve the artifact, compare component versions and checksums against trusted upstream releases or an independent trusted resolver, and commit only reviewed metadata. JitPack tags can be mutable: review the source commit as well as the downloaded binary. Generation is trust-on-first-use, not an independent authenticity check. Do not add broad trusted-artifact exemptions to make verification pass.
 
-Use the manual **Generate dependency baseline for review** workflow on this branch, or run the same command in a clean, trusted environment:
-
-```sh
-./gradlew --no-daemon --no-build-cache --write-locks \
-  --write-verification-metadata sha256 \
-  :app:assembleFdroidRelease :app:assemblePlayRelease \
-  :app:testFdroidDebugUnitTest :app:testPlayDebugUnitTest \
-  :app:assembleFdroidDebugAndroidTest :app:assemblePlayDebugAndroidTest \
-  :app:lintFdroidRelease :app:lintPlayRelease writeDependencyInventory
-```
-
-Review the generated `gradle.lockfile`, `buildscript-gradle.lockfile`, `app/gradle.lockfile` (and any app buildscript lockfile) and `gradle/verification-metadata.xml` before committing them. Compare provenance/checksums with trusted upstream releases or an independent trusted resolver. JitPack tags can be mutable: review the source commit as well as the downloaded binary. Generation is trust-on-first-use, not an independent authenticity check. Do not add broad trusted-artifact exemptions to make verification pass.
-
-After committing the baseline, rerun all CI checks in clean environments. Consider strict lock mode once every used configuration is captured; do not enable it with missing lockfiles. Archive the SDK packages/revisions and the exact toolchain used for release. The artifact inventory is evidence and a drift detector, not a substitute for reviewed lockfiles/verification metadata.
+Verification metadata records artifact checksums; it is not a dependency lockfile and does not by itself guarantee a fixed dependency graph. If lockfiles are later desired, first review and change the current incompatibility between dependency locking and the strict resolution guards, then generate and review lock state for every used configuration rather than claiming it exists. Archive the SDK packages/revisions and exact toolchain used for release. The artifact inventory is evidence and a drift detector, not a substitute for reviewed checksums or version constraints.
 
 ## Security coverage
 
