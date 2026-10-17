@@ -39,8 +39,10 @@ tasks.register('writeDependencyInventory') {
                 lines.add("artifact ${label} ${component.group}:${component.module}:${component.version} ${artifact.file.name} ${digest.digest().encodeHex()}")
             }
         }
-        // Name the configuration in the error: Gradle's variant-ambiguity text does not say which consumer failed.
+        // Log the consumer before resolution; Gradle may raise a metadata failure before exposing
+        // an UnresolvedDependencyResult, which bypasses the task-level exception wrapper.
         def record = { String label, configuration ->
+            logger.lifecycle("Recording dependency inputs for ${label}")
             try {
                 recordResolved(label, configuration)
             } catch (Exception failure) {

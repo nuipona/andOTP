@@ -60,7 +60,7 @@ class Environment private constructor() {
 
 class LocaleList {
     operator fun get(index: Int): Locale = Locale.ENGLISH
-    val size: Int get() = 1
+    fun size(): Int = 1
 }
 
 /**

@@ -19,4 +19,9 @@ captures
 .venv/
 __pycache__/
 reports/
+
+# Emulator CI diagnostics
+/gradle-install.log
+/gradle-connected.log
+/mem-emulator.log
 .cache/

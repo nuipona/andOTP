@@ -5,6 +5,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 KOTLIN = ROOT / "app/src/main/kotlin/org/shadowice/flocke/andotp"
 SANDBOX = ROOT / "scripts/kotlin-sandbox"
+WORKFLOWS = ROOT / ".github/workflows"
 
 
 class KotlinSandboxHarnessTest(unittest.TestCase):
@@ -119,6 +120,10 @@ class KotlinSandboxHarnessTest(unittest.TestCase):
         # Nothing may be unpacked inside the repository.
         self.assertIn("KOTLIN_SANDBOX_TOOLCHAIN", script)
         self.assertIn("${TMPDIR:-/tmp}/kotlin-sandbox-toolchain", script)
+
+    def test_ci_does_not_depend_on_the_local_harness(self):
+        for workflow in sorted(WORKFLOWS.glob("*.yml")):
+            self.assertNotIn("kotlin-sandbox", workflow.read_text(), workflow.name)
 
 
 if __name__ == "__main__":
