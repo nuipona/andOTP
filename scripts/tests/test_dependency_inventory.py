@@ -53,6 +53,7 @@ class DependencyInventoryPolicyTest(unittest.TestCase):
         self.assertIn("new TreeSet<String>()", source)
         self.assertIn("MessageDigest.getInstance('SHA-256')", source)
         self.assertIn("configuration ${label}", source)
+        self.assertIn('logger.lifecycle("Recording dependency inputs for ${label}")', source)
 
 
 @unittest.skipUnless(GRADLE, "Set GRADLE_EXECUTABLE to run the offline Gradle fixture")
