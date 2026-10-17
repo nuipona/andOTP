@@ -18,14 +18,20 @@ Use OfflineOTP's in-app backup and restore functions. Android cloud backup and d
 
 Automatic backup broadcasts are restricted to explicitly authorized companion apps signed with the same identity; ordinary shell commands and independently signed automation apps are not authorized. See [Vault security hardening](docs/vault-security-hardening.md) for the current behavior and compatibility details.
 
-## Build and test
+## Build
 
-The project uses Gradle, Android Gradle Plugin, Kotlin and Android SDK; current pinned toolchain details, local commands, CI gates, and limitations are documented in [Build and security tests](docs/build-and-security-tests.md). Main app sources and test suites have been migrated to Kotlin. Some checked-in sandbox/source checks are intentionally non-authoritative; successful Gradle builds and Android instrumentation are required for release confidence.
+The project uses Gradle, Android Gradle Plugin, Kotlin and the Android SDK. The GitHub Actions workflows build the fdroid and play APKs (debug and release):
+
+```sh
+./gradlew --no-daemon :app:assembleFdroidDebug
+./gradlew --no-daemon :app:assembleFdroidRelease
+./gradlew --no-daemon :app:assemblePlayDebug
+./gradlew --no-daemon :app:assemblePlayRelease
+```
 
 ## Documentation
 
 - [Changelog](CHANGELOG.md) — published release history.
-- [Build and security tests](docs/build-and-security-tests.md) — toolchain, CI, verification steps and caveats.
 - [Vault security hardening](docs/vault-security-hardening.md) — storage, session, backup and IPC security behavior.
 - [Kotlin conversion record](docs/kotlin-extracted-helpers.md) — conversion scope and verification limits.
 - [OTP URI parser](docs/kotlin-otp-parser-pilot.md) and [vault/session/task contracts](docs/kotlin-vault-session-task-contracts.md) — implementation details and contract boundaries.

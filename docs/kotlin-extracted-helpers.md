@@ -1303,7 +1303,7 @@ provider write semantics), the encrypted-backup writer and settings-driven backu
 runtime-permission flow, and the real
 `org.json`/`commons-codec`/`android.net.Uri` behaviour beyond the documented replicated subsets are
 not covered by the sandbox check. See
-[build commands](build-and-security-tests.md). Remaining decomposition and UI conversion work is
+the build commands in the README. Remaining decomposition and UI conversion work is
 tracked in the [decomposition plan](ui-decomposition-plan.md).
 
 ## Deliberately not converted

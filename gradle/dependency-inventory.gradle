@@ -51,25 +51,17 @@ tasks.register('writeDependencyInventory') {
         }
         record('root-buildscript', project.buildscript.configurations.classpath)
         def app = project(':app')
-        ['fdroidDebug', 'fdroidRelease', 'playDebug', 'playRelease',
-         'fdroidDebugUnitTest', 'playDebugUnitTest',
-         'fdroidDebugAndroidTest', 'playDebugAndroidTest'].each { variant ->
+        ['fdroidDebug', 'fdroidRelease', 'playDebug', 'playRelease'].each { variant ->
             ['CompileClasspath', 'RuntimeClasspath'].each { suffix ->
                 def name = "${variant}${suffix}"
                 // Missing configurations are errors, not a reason to silently drop test inputs.
                 record(name, app.configurations.getByName(name))
             }
         }
-        def securityClient = project(':security-test-client')
-        ['debugCompileClasspath', 'debugRuntimeClasspath'].each { name ->
-            // The independently signed caller is a build input too, even though it is never shipped.
-            record("security-test-client:${name}", securityClient.configurations.getByName(name))
-        }
-
         // Kotlin's compiler/build-tools/plugin artifacts are build inputs too, not
         // just the stdlib on variant classpaths. Include all resolvable such configs
-        // for both Kotlin-enabled Android modules.
-        [app, securityClient].each { kotlinProject ->
+        // for the Kotlin-enabled Android module.
+        [app].each { kotlinProject ->
             def kotlinTooling = kotlinProject.configurations.findAll { configuration ->
                 configuration.canBeResolved && (configuration.name.startsWith('kotlinCompiler')
                         || configuration.name.startsWith('kotlinBuildTools'))

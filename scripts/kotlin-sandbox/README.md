@@ -7,7 +7,7 @@ the real gates.
 
 **It is not a substitute for `./gradlew :app:testFdroidDebugUnitTest`, `lint*Release`,
 `assemble*`, the packaged-manifest policy or the API 28/36 instrumentation runs described in
-[build-and-security-tests.md](../../docs/build-and-security-tests.md).** A green run here is not
+the README.** A green run here is not
 build, lint, device or release acceptance, and it does not compile any Java source, resource or
 manifest.
 
@@ -522,4 +522,4 @@ configuration change, the real screen-off broadcast and the activity lifecycle w
 - Not executed here: Gradle, lint, the instrumentation tests and any device run. The sandbox runner is still
   non-authoritative and compiles no Java/test source. A separate Kotlin 2.4.21 compile-only smoke check of the
   migrated Kotlin test sources with local JUnit/Android stand-ins is also non-authoritative; the Kotlin interop
-  suites and all tests still require the Gradle/device gates in [build-and-security-tests.md](../../docs/build-and-security-tests.md).
+  suites and all tests still require the Gradle builds in the README.

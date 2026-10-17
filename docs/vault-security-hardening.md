@@ -73,7 +73,7 @@ The Python suite checks the signature-bound manifest policy, backup-disable poli
 - Credential-change failure preserving ciphertext/preferences, successful matching ciphertext/verifier/salt, and canceled encryption changes creating no replacement key.
 - URI/JSON numeric and size bounds; late-result cancellation/revocation and unexpected task exceptions.
 
-The caller is the test-only `security-test-client` module. It generates an independent local test signing key under its excluded build directory and is installed before connected tests. **Do not distribute it or run destructive tests on real account installations.** See [build/test instructions](build-and-security-tests.md).
+The caller is the test-only `security-test-client` module. It generates an independent local test signing key under its excluded build directory and is installed before connected tests. **Do not distribute it or run destructive tests on real account installations.**
 
 Local validation still cannot run the Gradle/JUnit/Android gates in this sandbox: no complete pinned JDK/SDK or dependency resolution is available. The Kotlin sandbox and a compile-only smoke check with hand-written Android/JUnit stand-ins are not validation against the Gradle plugin, real Android APIs or a device; the Java interoperability suites have not been compiled here. Both-flavor builds, lint, JVM unit tests, packaged manifest/resource inspection, API 28/36 emulator runs, and actual reproducibility comparisons still need a suitable environment/CI. OEM restore behavior, provider failure injection and UI/process-death/rotation flows need further device testing.
 
