@@ -1,3 +1,5 @@
+![OfflineOTP](./assets/logo.png)
+
 # OfflineOTP
 
 OfflineOTP is an open-source Android authenticator that generates time-based (TOTP), counter-based (HOTP), and mOTP one-time passwords. It supports Android 9 (API 28) and later. The current app version is **0.9.0.1**; the Android application ID remains `org.shadowice.flocke.andotp`.
