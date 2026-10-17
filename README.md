@@ -31,8 +31,26 @@ The project uses Gradle, Android Gradle Plugin, Kotlin and Android SDK; current 
 
 ## Contributing
 
-Report bugs and request features through the [GitHub issue tracker](https://github.com/andOTP/andOTP/issues). For bug reports, include the app version, Android version, reproduction steps, and relevant logs; remove secrets and account data before sharing logs.
+Report bugs and request features through the [GitHub issue tracker](https://github.com/unsubstantiation/OfflineOTP/issues). For bug reports, include the app version, Android version, reproduction steps, and relevant logs; remove secrets and account data before sharing logs.
 
 ## Credits and license
+# LICENSE
 
-OfflineOTP is a Kotlin rewrite of andOTP, originally created by Jakob Nixdorf and Bruno Bierbaumer. See [LICENSE.txt](LICENSE.txt) for the current PolyForm Noncommercial License 1.0.0 and attribution terms. Open-source component acknowledgments are maintained in the app's About/Libraries screen.
+Copyright (c) 2026 unsubstantiation (fairuniversal.com)
+
+This software is licensed under the PolyForm Noncommercial License 1.0.0. 
+You may use, copy, modify, and distribute this software for noncommercial purposes only.
+
+### Attribution Requirement
+Any copying, distribution, or modification of this code or its contents strictly requires 
+prominent attribution to the original author (unsubstantiation) by retaining the above 
+copyright notice in all copies or substantial portions of the software.
+
+To view the full terms, visit: https://polyformproject.org
+
+--------------------------------------------------------------------------------
+
+# ATTRIBUTION
+
+This project is a complete update from android 5.1+ to android 9+ rewrite in Kotlin of andOTP, originally copyright 
+(C) 2017-2020 Jakob Nixdorf and (C) 2015 Bruno Bierbaumer.
