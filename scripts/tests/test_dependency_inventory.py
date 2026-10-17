@@ -106,11 +106,10 @@ subprojects {
         dependencies.add(configName, 'inventory.fixture:runtime:1.0')
     }
 }
-project(':app') {
-    // One graph variant, but multiple incompatible artifact variants, just like the tested app.
-    configurations.create('testedAppElements') {
-        canBeResolved = false
-        canBeConsumed = true
+project(':security-test-client') {
+    // The Java component provides a real project variant; attach AGP-like secondary artifacts.
+    apply plugin: 'java-library'
+    configurations.runtimeElements {
         ['jar', 'android-app-symbol-for-data-binding'].each { kind ->
             outgoing.variants.create(kind) {
                 attributes.attribute(Attribute.of('artifactType', String), kind)
@@ -118,12 +117,13 @@ project(':app') {
             }
         }
     }
-    dependencies.add('testedAppElements', 'inventory.fixture:runtime:1.0')
+}
+project(':app') {
     // Capture the project DependencyHandler before entering a Configuration callback;
     // there, the unqualified `dependencies` property is that configuration's dependency set.
     def appDependencies = dependencies
     configurations.matching { it.name.contains('UnitTest') || it.name.contains('AndroidTest') }.all { config ->
-        appDependencies.add(config.name, appDependencies.project(path: ':app'))
+        appDependencies.add(config.name, appDependencies.project(path: ':security-test-client'))
         appDependencies.add(config.name, 'inventory.fixture:test-kit:1.0')
     }
     if (rootProject.hasProperty('missingDependency')) {
@@ -169,7 +169,7 @@ apply from: 'dependency-inventory.gradle'
                 if variant.endswith(("UnitTest", "AndroidTest")):
                     self.assertIn(f"artifact {label} inventory.fixture:test-kit:1.0 test-kit-1.0.jar "
                                   f"{self.artifacts['test-kit']}\n", report)
-                    self.assertIn(f"graph {label} project :app -> project :app\n", report)
+                    self.assertIn(f"graph {label} project :app -> project :security-test-client\n", report)
         for config in TOOLING:
             self.assertIn(f"configuration kotlin-tooling:app:{config}\n", report)
         self.assertNotIn("not-built", report)
