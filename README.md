@@ -68,23 +68,6 @@ See [Vault security hardening](docs/vault-security-hardening.md) for input limit
 fail-closed behavior, process-only sessions, credential transactions, backup lifecycle
 and remaining verification requirements.
 
-## Migration:
-
-Check out [this](https://github.com/andOTP/andOTP/wiki/Migration) wiki page to learn about the different ways to migrate to OfflineOTP from other 2FA apps.
-
-**Warning**: Builds signed with different keys are not compatible!
-You will have to uninstall one to install the other, which will delete all your data.
-So make sure you have a **current backup** before switching!
-
-## Building and testing:
-
-See [Reproducible builds and security regression tests](docs/build-and-security-tests.md)
-for the pinned toolchain, local commands, CI checks, dependency-baseline review,
-and test coverage/limitations. The [Kotlin OTP parser pilot](docs/kotlin-otp-parser-pilot.md)
-adds a small validated URI boundary with explicit results while retaining Java callers.
-Instrumentation tests must only run on disposable
-emulators or installations without real accounts.
-
 ## Contribute:
 
  * **Bug reports and feature requests**: You can report bugs and request features in the [Issue tracker](https://github.com/andOTP/andOTP/issues) on GitHub.
@@ -92,7 +75,7 @@ emulators or installations without real accounts.
 
 #### Donations:
 
-If you want to show your appreciation for our work with a small donation you can do so using the following links:
+If you want to show your appreciation for the predecessor to our work with a small donation you can do so using the following links:
 
  * [Donate to Jakob Nixdorf](https://flocke.shadowice.org/donate.html) (Main developer, maintainer)
  * [Donate to Richy HBM](https://richyhbm.co.uk/donate) (Developer)
