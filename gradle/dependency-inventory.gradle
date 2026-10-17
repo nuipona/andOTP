@@ -43,7 +43,13 @@ tasks.register('writeDependencyInventory') {
         def record = { String label, configuration ->
             try {
                 recordResolved(label, configuration)
-            } catch (Exception failure) {
+            } catch (Throwable failure) {
+                // Some Gradle resolution failures escape as non-Exception throwables before an
+                // UnresolvedDependencyResult can be inspected. Preserve fatal JVM signals but
+                // keep the consumer configuration visible for ordinary resolution failures.
+                if (failure instanceof VirtualMachineError || failure instanceof ThreadDeath) {
+                    throw failure
+                }
                 throw new GradleException("Dependency inventory could not resolve ${label}", failure)
             }
         }
