@@ -1,3 +1,2 @@
 rootProject.name = "andOTP"
 include ":app"
-include ":security-test-client"

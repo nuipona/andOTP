@@ -77,7 +77,7 @@ Added source tests:
 - Five additional vault instrumentation tests for missing versus valid empty reads, entry ownership, pre-commit cancellation, unknown metadata quarantine, and committed promotion failure/recovery without implicit unlock.
 - Four Python source-policy checks for boundary placement, typed production consumers, redaction and explicit recovery. These check source structure only.
 
-Run the existing CI tasks documented in `build-and-security-tests.md`; do not substitute grammar parsing or Python checks for them. Android rotation/pause/replacement and provider behavior still require device acceptance review. Best-effort wiping cannot erase immutable Strings, platform/JCA copies, provider-held plaintext or a compromised process. Typed states do not make cancellation transactional, authenticate imported accounts, or eliminate partial manual-provider output.
+Build the APKs with the Gradle commands in the README; do not substitute grammar parsing or Python checks for them. Android rotation/pause/replacement and provider behavior still require device acceptance review. Best-effort wiping cannot erase immutable Strings, platform/JCA copies, provider-held plaintext or a compromised process. Typed states do not make cancellation transactional, authenticate imported accounts, or eliminate partial manual-provider output.
 
 ## Subsequent UI work
 
