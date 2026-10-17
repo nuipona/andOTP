@@ -119,9 +119,12 @@ project(':app') {
         }
     }
     dependencies.add('testedAppElements', 'inventory.fixture:runtime:1.0')
+    // Capture the project DependencyHandler before entering a Configuration callback;
+    // there, the unqualified `dependencies` property is that configuration's dependency set.
+    def appDependencies = dependencies
     configurations.matching { it.name.contains('UnitTest') || it.name.contains('AndroidTest') }.all { config ->
-        dependencies.add(config.name, dependencies.project(path: ':app'))
-        dependencies.add(config.name, 'inventory.fixture:test-kit:1.0')
+        appDependencies.add(config.name, appDependencies.project(path: ':app'))
+        appDependencies.add(config.name, 'inventory.fixture:test-kit:1.0')
     }
     if (rootProject.hasProperty('missingDependency')) {
         dependencies.add('fdroidDebugUnitTestCompileClasspath', 'inventory.fixture:absent:1.0')
