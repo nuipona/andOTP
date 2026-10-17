@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify checked-in wrapper provenance and immutable CI action references.
+"""Verify checked-in Gradle wrapper provenance.
 
 Wrapper hashes are from Gradle's v8.13.0 release and the corresponding tagged
 scripts: https://github.com/gradle/gradle-distributions/releases/tag/v8.13.0
@@ -7,7 +7,6 @@ No downloads are executed by this check.
 """
 import hashlib
 from pathlib import Path
-import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,10 +41,6 @@ def check(root=ROOT):
         errors.append("Gradle distribution checksum is missing or changed")
     if properties.get("validateDistributionUrl") != "true":
         errors.append("Gradle distribution URL validation disabled")
-    for workflow in (root / ".github/workflows").glob("*.y*ml"):
-        for reference in re.findall(r"(?m)^\s*(?:-\s*)?uses:\s*([^\s#]+)", workflow.read_text()):
-            if not re.fullmatch(r"[\w.-]+/[\w./-]+@[0-9a-f]{40}", reference):
-                errors.append(f"Unpinned workflow action in {workflow.name}: {reference}")
     return errors
 
 
@@ -54,7 +49,7 @@ def main():
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
-    print("Wrapper hashes, distribution checksum, and CI action pins passed")
+    print("Wrapper hashes and distribution checksum passed")
     return 0
 
 

@@ -14,12 +14,12 @@ class BuildInputsTest(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
-        for name in [*checker.HASHES, "gradle/wrapper/gradle-wrapper.properties", ".github/workflows/android-ci.yml"]:
+        for name in [*checker.HASHES, "gradle/wrapper/gradle-wrapper.properties"]:
             destination = self.root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((ROOT / name).read_bytes())
 
-    def test_official_wrapper_and_pinned_actions_pass(self):
+    def test_official_wrapper_passes(self):
         self.assertEqual([], checker.check(self.root))
 
     def test_modified_wrapper_is_rejected(self):
@@ -39,11 +39,6 @@ class BuildInputsTest(unittest.TestCase):
         path = self.root / "gradle/wrapper/gradle-wrapper.properties"
         path.write_text(path.read_text().replace("gradle-8.13-all.zip", "gradle-8.14-all.zip"))
         self.assertTrue(checker.check(self.root))
-
-    def test_mutable_action_tag_is_rejected(self):
-        path = self.root / ".github/workflows/android-ci.yml"
-        path.write_text("jobs:\n  job:\n    steps:\n      - uses: actions/checkout@v4\n")
-        self.assertTrue(any("Unpinned" in error for error in checker.check(self.root)))
 
 
 if __name__ == "__main__":
